@@ -8,7 +8,7 @@ test("troll", function()
     assert(foo == 3)
   end)
 
-  it("handles failures", function()
+  it("fails tests", function()
     assert(foo == 4)
   end)
 
