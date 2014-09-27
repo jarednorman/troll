@@ -1,0 +1,8 @@
+#!/usr/bin/env lua
+-- Troll: A bullshit-free test runner for Lua
+
+test, it, before = require 'troll.core'()
+
+require 'test.test_helper'
+
+dofile(arg[1])
