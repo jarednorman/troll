@@ -12,7 +12,9 @@ function troll:push_context(name, fn)
     name = name,
     fn = fn,
     contexts = {},
-    before_callbacks = {}
+    tests = {},
+    before_callbacks = {},
+    results = {}
   }
   -- Add it to the tree.
   table.insert(self:current_context().contexts, new_context)
@@ -25,13 +27,28 @@ function troll:push_context(name, fn)
 end
 
 function troll:push_test(name, fn)
+  table.insert(self:current_context().tests, {name = name, fn = fn})
 end
 
 function troll:push_before(fn)
   table.insert(self:current_context().before_callbacks, fn)
 end
 
+local run_context
+run_context = function(context)
+  -- run the tests
+  for _, test in pairs(context.tests) do
+    table.insert(context.results, run_test(test))
+  end
+
+  -- run the contexts
+  for _, context in pairs(context.contexts) do
+    run_context(context)
+  end
+end
+
 function troll:run_tests()
+  run_context(context)
 end
 
 local test = function(name, fn)
