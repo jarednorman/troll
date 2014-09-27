@@ -35,15 +35,13 @@ function troll:push_before(fn)
   table.insert(self:current_context().before_callbacks, fn)
 end
 
-function troll:print_results()
-end
-
 local run_test = function(test)
   status, err = pcall(test)
+  local result
   if status then
-    local result = false
+    result = false
   else
-    local result = err
+    result = err
   end
   return {
     name = test.name,
@@ -55,6 +53,7 @@ local run_context
 run_context = function(context)
   -- run the tests
   for _, test in pairs(context.tests) do
+    -- TODO: Run before blocks here
     table.insert(context.results, run_test(test))
   end
 
@@ -66,6 +65,43 @@ end
 
 function troll:run_tests()
   run_context(self)
+end
+
+function troll:print_results()
+  local depth = 0
+  local increase_indent = function() depth = depth + 1 end
+  local decrease_indent = function() depth = depth - 1 end
+  local print_indented = function(str)
+    print(string.rep("  ", depth) .. str)
+  end
+
+  local show_context_results
+  show_context_results = function(context)
+    print_indented(context.name)
+
+    increase_indent()
+
+    for _, test in pairs(context.results) do
+      if test.result then
+        print_indented("✗ " .. test.name)
+        increase_indent()
+        print_indented(test.result)
+        decrease_indent()
+      else
+        print_indented("✓ " .. test.name)
+      end
+    end
+
+    for _, context in pairs(context.contexts) do
+      show_context_results(context)
+    end
+
+    decrease_indent()
+  end
+
+  for _, context in pairs(self.contexts) do
+    show_context_results(context)
+  end
 end
 
 return troll
