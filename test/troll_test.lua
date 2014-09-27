@@ -1,7 +1,30 @@
 test("troll", function()
   local foo
+  local array_of_things
+
+  context("contexts", function()
+    before(function()
+      table.insert(array_of_things, "outer context")
+    end)
+
+    it("call the before blocks for contexts in the right order", function()
+      assert(array_of_things == {"outer context"})
+    end)
+
+    context("nested contexts", function()
+      before(function()
+        table.insert(array_of_things, "inner context")
+      end)
+
+      it("call the before blocks for nested contexts in the right order", function()
+        assert(array_of_things == {"outer context", "inner context"})
+      end)
+    end)
+  end)
+
   before(function()
     foo = 3
+    array_of_things = {}
   end)
 
   it("runs tests", function()
