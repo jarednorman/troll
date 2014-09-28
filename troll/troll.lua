@@ -39,7 +39,7 @@ function troll:push_before(fn)
 end
 
 local run_test = function(test)
-  status, err = pcall(test)
+  status, err = pcall(test.fn)
 
   local result
   if status then
