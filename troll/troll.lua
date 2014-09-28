@@ -1,6 +1,7 @@
 local troll = {
   contexts = {},
   tests = {},
+  before_hooks = {},
   current_context = nil
 }
 
@@ -10,11 +11,12 @@ end
 
 function troll:push_context(name, fn)
   new_context = {
+    parent = self:current_context(),
     name = name,
     fn = fn,
     contexts = {},
     tests = {},
-    before_callbacks = {},
+    before_hooks = {},
     results = {}
   }
   -- Add it to the tree.
@@ -32,7 +34,7 @@ function troll:push_test(name, fn)
 end
 
 function troll:push_before(fn)
-  table.insert(self:current_context().before_callbacks, fn)
+  table.insert(self:current_context().before_hooks, fn)
 end
 
 local run_test = function(test)
@@ -49,11 +51,21 @@ local run_test = function(test)
   }
 end
 
+local run_before_hooks
+run_before_hooks = function(context)
+  if context then
+    run_before_hooks(context.parent)
+    for _, hook in pairs(context.before_hooks) do
+      hook()
+    end
+  end
+end
+
 local run_context
 run_context = function(context)
   -- run the tests
   for _, test in pairs(context.tests) do
-    -- TODO: Run before blocks here
+    run_before_hooks(context)
     table.insert(context.results, run_test(test))
   end
 
