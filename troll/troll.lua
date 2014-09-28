@@ -19,6 +19,7 @@ function troll:push_context(name, fn)
     before_hooks = {},
     results = {}
   }
+
   -- Add it to the tree.
   table.insert(self:current_context().contexts, new_context)
   -- Add it to the stack.
@@ -39,12 +40,14 @@ end
 
 local run_test = function(test)
   status, err = pcall(test)
+
   local result
   if status then
     result = false
   else
     result = err
   end
+
   return {
     name = test.name,
     result = result
