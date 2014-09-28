@@ -1,4 +1,5 @@
 local troll = {
+  stack = {},
   contexts = {},
   tests = {},
   before_hooks = {},
@@ -6,7 +7,7 @@ local troll = {
 }
 
 function troll:current_context()
-  return self.contexts[#self.contexts] or self
+  return self.stack[#self.stack] or self
 end
 
 function troll:push_context(name, fn)
@@ -21,13 +22,13 @@ function troll:push_context(name, fn)
   }
 
   -- Add it to the tree.
-  table.insert(self:current_context().contexts, new_context)
+    table.insert(self:current_context().contexts, new_context)
   -- Add it to the stack.
-  table.insert(self.contexts, new_context)
+  table.insert(self.stack, new_context)
   -- Run the "block".
   new_context.fn()
   -- Pop the context from the stack.
-  table.remove(self.contexts)
+  table.remove(self.stack)
 end
 
 function troll:push_test(name, fn)

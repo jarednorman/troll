@@ -1,3 +1,5 @@
+require 'test.helper'
+
 test("troll", function()
   local foo
   local array_of_things
