@@ -91,6 +91,18 @@ full_context_label = function(context)
   end
 end
 
+local colourizer = function(code)
+  return function(fn)
+    io.write(code)
+    fn()
+    io.write "\27[0m"
+  end
+end
+
+local red = colourizer "\27[31m"
+local green = colourizer "\27[32m"
+local yellow = colourizer "\27[33m"
+
 function troll:print_results()
   print "Results:\n"
 
@@ -112,9 +124,13 @@ function troll:print_results()
     if context.results then
       for _, test in pairs(context.results) do
         if test.failure then
-          print_indented("✗ " .. test.name)
+          red(function()
+            print_indented("✗ " .. test.name)
+          end)
         else
-          print_indented("✓ " .. test.name)
+          green(function()
+            print_indented("✓ " .. test.name)
+          end)
         end
       end
     end
@@ -135,9 +151,13 @@ function troll:print_results()
       for _, test in pairs(context.results) do
         if test.failure then
           print("")
-          print(full_context_label(context) .. test.name)
-          print(test.failure)
-          print(test.traceback)
+          red(function()
+            print(full_context_label(context) .. test.name)
+          end)
+          yellow(function()
+            print(test.failure)
+            print(test.traceback)
+          end)
         end
       end
     end
