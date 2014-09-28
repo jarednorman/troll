@@ -82,8 +82,17 @@ function troll:run_tests()
   run_context(self)
 end
 
+local full_context_label
+full_context_label = function(context)
+  if context.parent then
+    return full_context_label(context.parent) .. context.name .. " "
+  else
+    return ""
+  end
+end
+
 function troll:print_results()
-  local depth = 0
+  local depth = -1
   local increase_indent = function() depth = depth + 1 end
   local decrease_indent = function() depth = depth - 1 end
   local print_indented = function(str)
@@ -92,18 +101,22 @@ function troll:print_results()
 
   local show_context_results
   show_context_results = function(context)
-    print_indented(context.name)
+    if context.name then
+      print_indented(context.name)
+    end
 
     increase_indent()
 
-    for _, test in pairs(context.results) do
-      if test.result then
-        print_indented("✗ " .. test.name)
-        increase_indent()
-        print_indented(test.result)
-        decrease_indent()
-      else
-        print_indented("✓ " .. test.name)
+    if context.results then
+      for _, test in pairs(context.results) do
+        if test.result then
+          print_indented("✗ " .. test.name)
+          increase_indent()
+          print_indented(test.result)
+          decrease_indent()
+        else
+          print_indented("✓ " .. test.name)
+        end
       end
     end
 
@@ -113,10 +126,28 @@ function troll:print_results()
 
     decrease_indent()
   end
+  show_context_results(self)
 
-  for _, context in pairs(self.contexts) do
-    show_context_results(context)
+  print "\n############"
+  print   "# FAILURES #"
+  print   "############\n"
+
+  local show_context_tracebacks
+  show_context_tracebacks = function(context)
+    if context.results then
+      for _, test in pairs(context.results) do
+        if test.result then
+          print(full_context_label(context) .. test.name)
+        end
+      end
+    end
+
+    for _, context in pairs(context.contexts) do
+      show_context_tracebacks(context)
+    end
   end
+
+  show_context_tracebacks(self)
 end
 
 return troll
