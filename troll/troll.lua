@@ -92,6 +92,8 @@ full_context_label = function(context)
 end
 
 function troll:print_results()
+  print "Results:\n"
+
   local depth = -1
   local increase_indent = function() depth = depth + 1 end
   local decrease_indent = function() depth = depth - 1 end
@@ -128,9 +130,7 @@ function troll:print_results()
   end
   show_context_results(self)
 
-  print "\n############"
-  print   "# FAILURES #"
-  print   "############\n"
+  print "\nFailures:\n"
 
   local show_context_tracebacks
   show_context_tracebacks = function(context)
