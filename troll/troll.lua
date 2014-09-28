@@ -41,16 +41,16 @@ end
 local run_test = function(test)
   status, err = pcall(test.fn)
 
-  local result
+  local failure
   if status then
-    result = false
+    failure = false
   else
-    result = err
+    failure = err
   end
 
   return {
     name = test.name,
-    result = result
+    failure = failure
   }
 end
 
@@ -111,10 +111,10 @@ function troll:print_results()
 
     if context.results then
       for _, test in pairs(context.results) do
-        if test.result then
+        if test.failure then
           print_indented("✗ " .. test.name)
           increase_indent()
-          print_indented(test.result)
+          print_indented(test.failure)
           decrease_indent()
         else
           print_indented("✓ " .. test.name)
@@ -136,7 +136,7 @@ function troll:print_results()
   show_context_tracebacks = function(context)
     if context.results then
       for _, test in pairs(context.results) do
-        if test.result then
+        if test.failure then
           print(full_context_label(context) .. test.name)
         end
       end
