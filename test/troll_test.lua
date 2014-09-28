@@ -8,7 +8,7 @@ test("troll", function()
     end)
 
     it("call the before blocks for contexts in the right order", function()
-      assert(array_of_things == {"outer context"})
+      assert(unpack(array_of_things) == "outer context")
     end)
 
     context("nested contexts", function()
@@ -17,7 +17,7 @@ test("troll", function()
       end)
 
       it("call the before blocks for nested contexts in the right order", function()
-        assert(array_of_things == {"outer context", "inner context"})
+        assert(unpack(array_of_things) == "outer context", "inner context")
       end)
     end)
   end)
