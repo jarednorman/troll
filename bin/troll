@@ -5,7 +5,9 @@ run_tests, print_results, test, context, it, before = require 'troll.core'()
 
 require 'test.test_helper'
 
-dofile(arg[1])
+for index = 1, #arg do
+  dofile(arg[index])
+end
 
 run_tests()
 print_results()
