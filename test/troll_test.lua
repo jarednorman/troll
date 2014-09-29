@@ -40,6 +40,18 @@ test("troll.troll", function()
     end)
   end)
 
+  describe(":push_after()", function()
+    local after_fn = function() end
+
+    it("adds the function to the contexts after hooks", function()
+      troll:push_after(after_fn)
+
+      local current_after_hooks = troll:current_context().after_hooks
+
+      assert(current_after_hooks[#current_after_hooks] == after_fn)
+    end)
+  end)
+
   describe(":push_before()", function()
     local before_fn = function() end
 

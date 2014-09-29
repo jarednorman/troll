@@ -3,6 +3,7 @@ require 'test.helper'
 test("troll features", function()
   local foo
   local array_of_things
+  local after_hook_called = false
 
   context("contexts", function()
     before(function()
@@ -29,11 +30,19 @@ test("troll features", function()
     array_of_things = {}
   end)
 
+  after(function()
+    after_hook_called = true
+  end)
+
   it("runs tests", function()
     assert(foo == 3)
   end)
 
   it("loads the test helper", function()
     assert(test_helper_loaded)
+  end)
+
+  it("runs after hooks", function()
+    assert(after_hook_called)
   end)
 end)

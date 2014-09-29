@@ -20,7 +20,11 @@ local before = function(fn)
   troll:push_before(fn)
 end
 
+local after = function(fn)
+  troll:push_after(fn)
+end
+
 -- Require cannot return multiple values.
 return function()
-  return run_tests, print_results, context, it, before
+  return run_tests, print_results, context, it, before, after
 end

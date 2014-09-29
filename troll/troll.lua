@@ -4,6 +4,7 @@ return function()
     contexts = {},
     tests = {},
     before_hooks = {},
+    after_hooks = {},
     current_context = nil
   }
 
@@ -19,6 +20,7 @@ return function()
       contexts = {},
       tests = {},
       before_hooks = {},
+      after_hooks = {},
       results = {}
     }
 
@@ -38,6 +40,10 @@ return function()
 
   function troll:push_before(fn)
     table.insert(self:current_context().before_hooks, fn)
+  end
+
+  function troll:push_after(fn)
+    table.insert(self:current_context().after_hooks, fn)
   end
 
   local run_test = function(test)
@@ -66,12 +72,23 @@ return function()
     end
   end
 
+  local run_after_hooks
+  run_after_hooks = function(context)
+    if context then
+      run_after_hooks(context.parent)
+      for _, hook in pairs(context.after_hooks) do
+        hook()
+      end
+    end
+  end
+
   local run_context
   run_context = function(context)
     -- run the tests
     for _, test in pairs(context.tests) do
       run_before_hooks(context)
       table.insert(context.results, run_test(test))
+      run_after_hooks(context)
     end
 
     -- run the contexts
