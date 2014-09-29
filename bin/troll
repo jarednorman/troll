@@ -1,7 +1,7 @@
 #!/usr/bin/env lua
 -- Troll: A bullshit-free test runner for Lua
 
-run_tests, print_results, test, context, it, before = require 'troll.core'()
+run_tests, print_results, context, it, before = require 'troll.core'()
 
 for index = 1, #arg do
   dofile(arg[index])

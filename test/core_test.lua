@@ -12,7 +12,7 @@ test("troll.core", function()
   end)
 
   it("secretly is maybe some aliases don't tell anyone", function()
-    local run_tests, print_results, test, context, it, before = require 'troll.core'()
+    local run_tests, print_results, context, it, before = require 'troll.core'()
     assert(test == context)
   end)
 end)
